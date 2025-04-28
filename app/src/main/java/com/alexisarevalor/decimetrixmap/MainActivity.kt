@@ -13,9 +13,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import com.alexisarevalor.decimetrixmap.core.navigation.NavigationWrapper
 import com.alexisarevalor.decimetrixmap.main.LocationPermissionTextProvider
 import com.alexisarevalor.decimetrixmap.main.MainViewModel
 import com.alexisarevalor.decimetrixmap.main.PermissionDialog
@@ -91,7 +93,7 @@ class MainActivity : ComponentActivity() {
 
                 //Main content of the app
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
+                    NavigationWrapper(Modifier.padding(innerPadding))
                 }
             }
         }
