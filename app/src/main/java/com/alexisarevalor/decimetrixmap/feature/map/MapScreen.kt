@@ -10,17 +10,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.alexisarevalor.decimetrixmap.R
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
-import com.mapbox.maps.extension.compose.annotation.generated.PointAnnotation
-import com.mapbox.maps.extension.compose.annotation.rememberIconImage
+import com.mapbox.maps.extension.compose.annotation.generated.CircleAnnotation
 import com.mapbox.maps.extension.compose.rememberMapState
 import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
@@ -74,6 +72,9 @@ fun MapScreen(
                     .build()
 
                 mapView.mapboxMap.setBounds(cameraBoundsOptions)
+
+                // Get the places from the API
+                mapViewModel.getPlaces()
             }
 
             // Do something when the camera changes
@@ -86,18 +87,17 @@ fun MapScreen(
             }
 
             // Draw the points on the map
-            val marker = rememberIconImage(
-                key = R.drawable.red_marker,
-                painter = painterResource(R.drawable.red_marker)
-            )
             currentPointList.forEach { place ->
-                PointAnnotation(
+                CircleAnnotation(
                     point = Point.fromLngLat(
                         /* longitude = */ place.geometry.coordinates[0],
                         /* latitude = */ place.geometry.coordinates[1]
                     )
                 ) {
-                    iconImage = marker
+                    circleRadius = 8.0
+                    circleColor = Color(0xffee4e8b)
+                    circleStrokeWidth = 2.0
+                    circleStrokeColor = Color(0xffffffff)
                     interactionsState.onClicked {
                         Toast.makeText(context, place.properties.name, Toast.LENGTH_SHORT).show()
                         true

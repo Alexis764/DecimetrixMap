@@ -19,7 +19,7 @@ class MapViewModel @Inject constructor(
 
     private val placesList = mutableListOf<Feature>()
 
-    init {
+    fun getPlaces() {
         viewModelScope.launch(Dispatchers.IO) {
             val placesResponse = placesService.getPlaces()
             if (placesResponse.isSuccessful && placesResponse.body() != null) {
