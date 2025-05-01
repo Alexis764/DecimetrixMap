@@ -79,6 +79,7 @@ class MapViewModel @Inject constructor(
 
     fun setCurrentPlace(place: Feature) {
         _currentPlaceSearched.value = place
+        _filteredPlaces.clear()
     }
 
 }

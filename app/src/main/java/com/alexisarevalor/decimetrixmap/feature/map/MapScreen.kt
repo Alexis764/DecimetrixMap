@@ -1,47 +1,23 @@
 package com.alexisarevalor.decimetrixmap.feature.map
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.ShapeDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.alexisarevalor.decimetrixmap.R
+import com.alexisarevalor.decimetrixmap.feature.map.components.SearchBox
 import com.alexisarevalor.decimetrixmap.feature.map.data.Feature
-import com.alexisarevalor.decimetrixmap.ui.theme.SearchbarBackground
 import com.mapbox.geojson.Point
 import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.extension.compose.MapEffect
@@ -88,110 +64,19 @@ fun MapScreen(
         )
 
         if (isSearchingReady) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .padding(horizontal = 8.dp, vertical = 32.dp)
-            ) {
-                MySearchBar(
-                    text = placeName,
-                    onValueChanged = { mapViewModel.setPlaceName(it) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                AnimatedVisibility(placeName.isNotBlank()) {
-                    MyPlacesList(
-                        filteredPlaces = filteredPlaces,
-                        onItemClick = { mapViewModel.setCurrentPlace(it) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = 200.dp)
-                            .clip(RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp))
-                            .background(SearchbarBackground)
-                    )
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun MyPlacesList(
-    filteredPlaces: List<Feature>,
-    onItemClick: (Feature) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = PaddingValues(vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        itemsIndexed(items = filteredPlaces) { index, place ->
-            Column(
+            SearchBox(
+                placeName = placeName,
+                onValueChanged = { mapViewModel.setPlaceName(it) },
+                filteredPlaces = filteredPlaces,
+                setCurrentPlace = { mapViewModel.setCurrentPlace(it) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onItemClick(place) }
-            ) {
-                Text(
-                    text = place.properties.name,
-                    color = Color.White,
-                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                if (index != filteredPlaces.lastIndex) {
-                    HorizontalDivider(color = Color.White)
-                }
-            }
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 52.dp)
+                    .align(Alignment.TopCenter)
+            )
         }
     }
-}
-
-@Composable
-fun MySearchBar(
-    text: String,
-    onValueChanged: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    OutlinedTextField(
-        value = text,
-        onValueChange = { onValueChanged(it) },
-        modifier = modifier,
-        placeholder = {
-            Text("Search here")
-        },
-        leadingIcon = {
-            Image(
-                painter = painterResource(R.drawable.red_marker),
-                contentDescription = null
-            )
-        },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        singleLine = true,
-        maxLines = 1,
-        textStyle = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
-        shape = if (text.isNotBlank()) {
-            RoundedCornerShape(
-                topStart = 28.dp,
-                topEnd = 28.dp,
-                bottomEnd = 0.dp,
-                bottomStart = 0.dp
-            )
-        } else {
-            ShapeDefaults.ExtraLarge
-        },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = SearchbarBackground,
-            unfocusedContainerColor = SearchbarBackground,
-            focusedPlaceholderColor = Color.LightGray,
-            unfocusedPlaceholderColor = Color.LightGray,
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.White
-        )
-    )
 }
 
 
@@ -244,8 +129,7 @@ fun MyMap(
                                 /* latitude = */ currentPlaceSearched.geometry.coordinates[1]
                             )
                         )
-
-                        zoom(10.0)
+                        zoom(9.0)
                     }
                 )
             }
