@@ -29,6 +29,17 @@ class MapViewModel @Inject constructor(
         _isSearchingReady.value = true
     }
 
+    private val _isDetailDialogVisible = MutableLiveData<Boolean>()
+    val isDetailDialogVisible: LiveData<Boolean> = _isDetailDialogVisible
+
+    fun showDetailDialog() {
+        _isDetailDialogVisible.value = true
+    }
+
+    fun hideDetailDialog() {
+        _isDetailDialogVisible.value = false
+    }
+
 
     //Init places list
     private val placesList = mutableListOf<Feature>()

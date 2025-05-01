@@ -12,22 +12,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.alexisarevalor.decimetrixmap.feature.map.components.MyMap
+import com.alexisarevalor.decimetrixmap.feature.map.components.PlaceDetailDialog
 import com.alexisarevalor.decimetrixmap.feature.map.components.SearchBox
-import com.alexisarevalor.decimetrixmap.feature.map.data.Feature
-import com.mapbox.geojson.Point
-import com.mapbox.maps.dsl.cameraOptions
-import com.mapbox.maps.extension.compose.MapEffect
-import com.mapbox.maps.extension.compose.MapboxMap
-import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
-import com.mapbox.maps.extension.compose.annotation.generated.CircleAnnotation
-import com.mapbox.maps.plugin.PuckBearing
-import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
-import com.mapbox.maps.plugin.locationcomponent.location
 
 @Composable
 fun MapScreen(
@@ -37,9 +28,12 @@ fun MapScreen(
     val context = LocalContext.current
 
     val isConnected by mapViewModel.networkStatus.collectAsState()
-    val isSearchingReady by mapViewModel.isSearchingReady.observeAsState(true)
+    val isSearchingReady by mapViewModel.isSearchingReady.observeAsState(false)
+
     val placeName by mapViewModel.placeName.observeAsState("")
     val filteredPlaces = mapViewModel.filteredPlaces
+
+    val isDetailDialogVisible by mapViewModel.isDetailDialogVisible.observeAsState(false)
 
     LaunchedEffect(isConnected) {
         if (!isConnected) {
@@ -60,6 +54,7 @@ fun MapScreen(
         MyMap(
             mapViewportState = mapViewportState,
             currentPlaceSearched = currentPlaceSearched,
+            currentPlaceClicked = { mapViewModel.showDetailDialog() },
             modifier = Modifier.fillMaxSize()
         )
 
@@ -77,62 +72,11 @@ fun MapScreen(
             )
         }
     }
-}
 
-
-@Composable
-fun MyMap(
-    mapViewportState: MapViewportState,
-    currentPlaceSearched: Feature?,
-    modifier: Modifier = Modifier
-) {
-    MapboxMap(
-        modifier = modifier,
-        mapViewportState = mapViewportState
-    ) {
-        // Map setup
-        MapEffect(Unit) { mapView ->
-            // Set the map's camera to the user's location
-            mapView.location.updateSettings {
-                locationPuck = createDefault2DPuck(withBearing = true)
-                enabled = true
-                puckBearing = PuckBearing.COURSE
-                puckBearingEnabled = true
-            }
-            mapViewportState.transitionToFollowPuckState()
-        }
-
-        if (currentPlaceSearched != null) {
-            CircleAnnotation(
-                point = Point.fromLngLat(
-                    /* longitude = */ currentPlaceSearched.geometry.coordinates[0],
-                    /* latitude = */ currentPlaceSearched.geometry.coordinates[1]
-                )
-            ) {
-                circleRadius = 8.0
-                circleColor = Color(0xffee4e8b)
-                circleStrokeWidth = 2.0
-                circleStrokeColor = Color(0xffffffff)
-                interactionsState.onClicked {
-                    true
-                }
-            }
-        }
-
-        MapEffect(currentPlaceSearched) {
-            if (currentPlaceSearched != null) {
-                mapViewportState.easeTo(
-                    cameraOptions {
-                        center(
-                            Point.fromLngLat(
-                                /* longitude = */ currentPlaceSearched.geometry.coordinates[0],
-                                /* latitude = */ currentPlaceSearched.geometry.coordinates[1]
-                            )
-                        )
-                        zoom(9.0)
-                    }
-                )
-            }
-        }
+    if (isDetailDialogVisible && currentPlaceSearched != null) {
+        PlaceDetailDialog(
+            currentPlaceSearched = currentPlaceSearched!!,
+            onDismiss = { mapViewModel.hideDetailDialog() }
+        )
     }
 }
