@@ -14,7 +14,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.ShapeDefaults
@@ -91,6 +95,17 @@ fun MySearchBar(
                 painter = painterResource(R.drawable.red_marker),
                 contentDescription = null
             )
+        },
+        trailingIcon = {
+            if (text.isNotBlank()) {
+                IconButton(onClick = { onValueChanged("") }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
+            }
         },
         shape = if (isPlacesDisplayed) {
             RoundedCornerShape(
