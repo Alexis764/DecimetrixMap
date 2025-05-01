@@ -1,7 +1,6 @@
 package com.alexisarevalor.decimetrixmap.ui.theme
 
 import androidx.compose.ui.graphics.Color
-import com.mapbox.maps.plugin.annotation.generated.CircleAnnotation
 
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)

@@ -12,6 +12,7 @@ import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.extension.compose.annotation.generated.CircleAnnotation
+import com.mapbox.maps.extension.compose.style.MapStyle
 import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -21,11 +22,13 @@ fun MyMap(
     mapViewportState: MapViewportState,
     currentPlaceSearched: Feature?,
     currentPlaceClicked: () -> Unit,
+    mapStyle: String,
     modifier: Modifier = Modifier
 ) {
     MapboxMap(
         modifier = modifier,
-        mapViewportState = mapViewportState
+        mapViewportState = mapViewportState,
+        style = { MapStyle(style = mapStyle) }
     ) {
         // Map setup
         MapEffect(Unit) { mapView ->

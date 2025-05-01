@@ -10,14 +10,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.alexisarevalor.decimetrixmap.feature.map.components.MapMenu
 import com.alexisarevalor.decimetrixmap.feature.map.components.MyMap
 import com.alexisarevalor.decimetrixmap.feature.map.components.PlaceDetailDialog
 import com.alexisarevalor.decimetrixmap.feature.map.components.SearchBox
+import com.mapbox.maps.Style
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 
 @Composable
@@ -48,6 +53,7 @@ fun MapScreen(
     //Map States
     val mapViewportState = rememberMapViewportState()
     val currentPlaceSearched by mapViewModel.currentPlaceSearched.observeAsState(null)
+    var mapStyle by rememberSaveable { mutableStateOf(Style.MAPBOX_STREETS) }
 
     //Screen content
     Box(modifier = Modifier.fillMaxSize()) {
@@ -55,6 +61,7 @@ fun MapScreen(
             mapViewportState = mapViewportState,
             currentPlaceSearched = currentPlaceSearched,
             currentPlaceClicked = { mapViewModel.showDetailDialog() },
+            mapStyle = mapStyle,
             modifier = Modifier.fillMaxSize()
         )
 
@@ -71,6 +78,14 @@ fun MapScreen(
                     .align(Alignment.TopCenter)
             )
         }
+
+        MapMenu(
+            changeBaseMap = { mapStyle = it },
+            centerUserPosition = { mapViewportState.transitionToFollowPuckState() },
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.BottomEnd)
+        )
     }
 
     if (isDetailDialogVisible && currentPlaceSearched != null) {
