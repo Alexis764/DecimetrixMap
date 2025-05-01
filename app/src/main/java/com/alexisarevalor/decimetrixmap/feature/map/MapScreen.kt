@@ -22,7 +22,9 @@ import com.alexisarevalor.decimetrixmap.feature.map.components.MapMenu
 import com.alexisarevalor.decimetrixmap.feature.map.components.MyMap
 import com.alexisarevalor.decimetrixmap.feature.map.components.PlaceDetailDialog
 import com.alexisarevalor.decimetrixmap.feature.map.components.SearchBox
+import com.mapbox.geojson.Point
 import com.mapbox.maps.Style
+import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 
 @Composable
@@ -82,6 +84,20 @@ fun MapScreen(
         MapMenu(
             changeBaseMap = { mapStyle = it },
             centerUserPosition = { mapViewportState.transitionToFollowPuckState() },
+            currentPlaceSearched = currentPlaceSearched,
+            centerCurrentPlace = {
+                mapViewportState.easeTo(
+                    cameraOptions {
+                        center(
+                            Point.fromLngLat(
+                                /* longitude = */ currentPlaceSearched!!.geometry.coordinates[0],
+                                /* latitude = */ currentPlaceSearched!!.geometry.coordinates[1]
+                            )
+                        )
+                        zoom(9.0)
+                    }
+                )
+            },
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.BottomEnd)

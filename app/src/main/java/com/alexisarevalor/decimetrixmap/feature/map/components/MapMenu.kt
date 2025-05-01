@@ -1,7 +1,10 @@
 package com.alexisarevalor.decimetrixmap.feature.map.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -17,12 +20,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.alexisarevalor.decimetrixmap.R
+import com.alexisarevalor.decimetrixmap.feature.map.data.Feature
 import com.mapbox.maps.Style
 
 @Composable
 fun MapMenu(
     changeBaseMap: (String) -> Unit,
     centerUserPosition: () -> Unit,
+    currentPlaceSearched: Feature?,
+    centerCurrentPlace: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var baseMapSelectedIndex by rememberSaveable { mutableIntStateOf(0) }
@@ -36,6 +42,18 @@ fun MapMenu(
         horizontalAlignment = Alignment.End,
         modifier = modifier
     ) {
+        AnimatedVisibility(currentPlaceSearched != null) {
+            SmallFloatingActionButton(
+                onClick = { centerCurrentPlace() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+
         SmallFloatingActionButton(
             onClick = { centerUserPosition() }
         ) {
