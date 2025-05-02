@@ -6,8 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alexisarevalor.decimetrixmap.core.network.NetworkConnectivityObserver
+import com.alexisarevalor.decimetrixmap.core.storage.MapDatabase
 import com.alexisarevalor.decimetrixmap.feature.map.data.Feature
 import com.alexisarevalor.decimetrixmap.feature.map.data.PlacesService
+import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MapViewModel @Inject constructor(
     private val placesService: PlacesService,
+    private val mapDatabase: MapDatabase,
     connectivityObserver: NetworkConnectivityObserver
 ) : ViewModel() {
 
@@ -42,9 +45,11 @@ class MapViewModel @Inject constructor(
 
     private val _isModalPointVisible = MutableLiveData<Boolean>()
     val isModalPointVisible: LiveData<Boolean> = _isModalPointVisible
+    var point: Point? = null
 
-    fun showModalPoint() {
+    fun showModalPoint(point: Point) {
         _isModalPointVisible.value = true
+        this.point = point
     }
 
     fun hideModalPoint() {
@@ -102,6 +107,17 @@ class MapViewModel @Inject constructor(
     fun setCurrentPlace(place: Feature) {
         _currentPlaceSearched.value = place
         _filteredPlaces.clear()
+    }
+
+
+    //Save new point
+    fun savePoint(pointName: String, isAlert: Boolean) {
+        mapDatabase.insertPoint(
+            pointName = pointName,
+            pointLatitude = point?.latitude() ?: 0.0,
+            pointLongitude = point?.longitude() ?: 0.0,
+            pointAlert = if (isAlert) 1 else 0
+        )
     }
 
 }

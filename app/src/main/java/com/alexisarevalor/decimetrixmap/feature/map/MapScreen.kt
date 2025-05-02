@@ -67,7 +67,7 @@ fun MapScreen(
             currentPlaceClicked = { mapViewModel.showDetailDialog() },
             mapStyle = mapStyle,
             onMapLongClickListener = { point ->
-                mapViewModel.showModalPoint()
+                mapViewModel.showModalPoint(point)
             },
             modifier = Modifier.fillMaxSize()
         )
@@ -120,7 +120,7 @@ fun MapScreen(
         PointModal(
             onDismiss = { mapViewModel.hideModalPoint() },
             onSave = { pointName, isAlertPoint ->
-
+                mapViewModel.savePoint(pointName, isAlertPoint)
             }
         )
     }
