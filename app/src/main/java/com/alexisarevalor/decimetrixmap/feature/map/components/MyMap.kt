@@ -1,8 +1,14 @@
 package com.alexisarevalor.decimetrixmap.feature.map.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import com.alexisarevalor.decimetrixmap.R
 import com.alexisarevalor.decimetrixmap.feature.map.data.Feature
 import com.alexisarevalor.decimetrixmap.ui.theme.CircleAnnotationBackground
 import com.alexisarevalor.decimetrixmap.ui.theme.CircleAnnotationBorderCapital
@@ -12,6 +18,8 @@ import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.extension.compose.annotation.generated.CircleAnnotation
+import com.mapbox.maps.extension.compose.annotation.generated.PointAnnotation
+import com.mapbox.maps.extension.compose.annotation.rememberIconImage
 import com.mapbox.maps.extension.compose.style.MapStyle
 import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
@@ -23,12 +31,24 @@ fun MyMap(
     currentPlaceSearched: Feature?,
     currentPlaceClicked: () -> Unit,
     mapStyle: String,
+    onMapLongClickListener: (Point) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val marker = rememberIconImage(
+        key = R.drawable.red_marker,
+        painter = painterResource(R.drawable.red_marker)
+    )
+    var userPoint by rememberSaveable { mutableStateOf<Point?>(null) }
+
     MapboxMap(
         modifier = modifier,
         mapViewportState = mapViewportState,
-        style = { MapStyle(style = mapStyle) }
+        style = { MapStyle(style = mapStyle) },
+        onMapLongClickListener = { point ->
+            userPoint = point
+            onMapLongClickListener(point)
+            true
+        }
     ) {
         // Map setup
         MapEffect(Unit) { mapView ->
@@ -38,10 +58,12 @@ fun MyMap(
                 enabled = true
                 puckBearing = PuckBearing.COURSE
                 puckBearingEnabled = true
+                pulsingEnabled = true
             }
             mapViewportState.transitionToFollowPuckState()
         }
 
+        // Functions to search for places on map
         if (currentPlaceSearched != null) {
             val isCapital = currentPlaceSearched.properties.isCapital == 1
 
@@ -77,5 +99,8 @@ fun MyMap(
                 )
             }
         }
+
+        // Create user marker
+        userPoint?.let { PointAnnotation(point = it) { iconImage = marker } }
     }
 }

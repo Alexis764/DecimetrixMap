@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.alexisarevalor.decimetrixmap.feature.map.components.MapMenu
 import com.alexisarevalor.decimetrixmap.feature.map.components.MyMap
 import com.alexisarevalor.decimetrixmap.feature.map.components.PlaceDetailDialog
+import com.alexisarevalor.decimetrixmap.feature.map.components.PointModal
 import com.alexisarevalor.decimetrixmap.feature.map.components.SearchBox
 import com.mapbox.geojson.Point
 import com.mapbox.maps.Style
@@ -41,6 +42,7 @@ fun MapScreen(
     val filteredPlaces = mapViewModel.filteredPlaces
 
     val isDetailDialogVisible by mapViewModel.isDetailDialogVisible.observeAsState(false)
+    val isModalPointVisible by mapViewModel.isModalPointVisible.observeAsState(false)
 
     LaunchedEffect(isConnected) {
         if (!isConnected) {
@@ -64,6 +66,9 @@ fun MapScreen(
             currentPlaceSearched = currentPlaceSearched,
             currentPlaceClicked = { mapViewModel.showDetailDialog() },
             mapStyle = mapStyle,
+            onMapLongClickListener = { point ->
+                mapViewModel.showModalPoint()
+            },
             modifier = Modifier.fillMaxSize()
         )
 
@@ -108,6 +113,15 @@ fun MapScreen(
         PlaceDetailDialog(
             currentPlaceSearched = currentPlaceSearched!!,
             onDismiss = { mapViewModel.hideDetailDialog() }
+        )
+    }
+
+    if (isModalPointVisible) {
+        PointModal(
+            onDismiss = { mapViewModel.hideModalPoint() },
+            onSave = { pointName, isAlertPoint ->
+
+            }
         )
     }
 }

@@ -40,6 +40,17 @@ class MapViewModel @Inject constructor(
         _isDetailDialogVisible.value = false
     }
 
+    private val _isModalPointVisible = MutableLiveData<Boolean>()
+    val isModalPointVisible: LiveData<Boolean> = _isModalPointVisible
+
+    fun showModalPoint() {
+        _isModalPointVisible.value = true
+    }
+
+    fun hideModalPoint() {
+        _isModalPointVisible.value = false
+    }
+
 
     //Init places list
     private val placesList = mutableListOf<Feature>()
