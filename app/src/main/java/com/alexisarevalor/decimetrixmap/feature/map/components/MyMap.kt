@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.alexisarevalor.decimetrixmap.R
+import com.alexisarevalor.decimetrixmap.core.storage.PointModel
 import com.alexisarevalor.decimetrixmap.feature.map.data.Feature
 import com.alexisarevalor.decimetrixmap.ui.theme.CircleAnnotationBackground
 import com.alexisarevalor.decimetrixmap.ui.theme.CircleAnnotationBorderCapital
@@ -32,6 +33,7 @@ fun MyMap(
     currentPlaceClicked: () -> Unit,
     mapStyle: String,
     onMapLongClickListener: (Point) -> Unit,
+    pointFromDatabase: PointModel?,
     modifier: Modifier = Modifier
 ) {
     val marker = rememberIconImage(
@@ -100,7 +102,36 @@ fun MyMap(
             }
         }
 
+        MapEffect(pointFromDatabase) {
+            if (pointFromDatabase != null) {
+                mapViewportState.easeTo(
+                    cameraOptions {
+                        center(
+                            Point.fromLngLat(
+                                /* longitude = */ pointFromDatabase.pointLongitude,
+                                /* latitude = */ pointFromDatabase.pointLatitude
+                            )
+                        )
+                        zoom(9.0)
+                    }
+                )
+            }
+        }
+
         // Create user marker
         userPoint?.let { PointAnnotation(point = it) { iconImage = marker } }
+        pointFromDatabase?.let {
+            PointAnnotation(
+                point = Point.fromLngLat(
+                    /* longitude = */ it.pointLongitude,
+                    /* latitude = */ it.pointLatitude
+                )
+            )
+            {
+                iconImage = marker
+                textField = it.pointName
+                iconSize = 0.6
+            }
+        }
     }
 }

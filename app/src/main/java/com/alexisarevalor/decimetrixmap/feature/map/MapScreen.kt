@@ -30,6 +30,7 @@ import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportS
 
 @Composable
 fun MapScreen(
+    pointId: Int?,
     navigateToPointScreen: () -> Unit,
     mapViewModel: MapViewModel = hiltViewModel()
 ) {
@@ -59,6 +60,13 @@ fun MapScreen(
     val mapViewportState = rememberMapViewportState()
     val currentPlaceSearched by mapViewModel.currentPlaceSearched.observeAsState(null)
     var mapStyle by rememberSaveable { mutableStateOf(Style.MAPBOX_STREETS) }
+    val pointFromDatabase by mapViewModel.pointFromDatabase.observeAsState(null)
+
+    LaunchedEffect(Unit) {
+        if (pointId != null) {
+            mapViewModel.getPointById(pointId)
+        }
+    }
 
     //Screen content
     Box(modifier = Modifier.fillMaxSize()) {
@@ -70,6 +78,7 @@ fun MapScreen(
             onMapLongClickListener = { point ->
                 mapViewModel.showModalPoint(point)
             },
+            pointFromDatabase = pointFromDatabase,
             modifier = Modifier.fillMaxSize()
         )
 

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alexisarevalor.decimetrixmap.core.network.NetworkConnectivityObserver
 import com.alexisarevalor.decimetrixmap.core.storage.MapDatabase
+import com.alexisarevalor.decimetrixmap.core.storage.PointModel
 import com.alexisarevalor.decimetrixmap.feature.map.data.Feature
 import com.alexisarevalor.decimetrixmap.feature.map.data.PlacesService
 import com.mapbox.geojson.Point
@@ -118,6 +119,18 @@ class MapViewModel @Inject constructor(
             pointLongitude = point?.longitude() ?: 0.0,
             pointAlert = if (isAlert) 1 else 0
         )
+    }
+
+
+    //Get point from database
+    private val _pointFromDatabase = MutableLiveData<PointModel?>()
+    val pointFromDatabase: LiveData<PointModel?> = _pointFromDatabase
+
+    fun getPointById(pointId: Int) {
+        viewModelScope.launch {
+            val point = mapDatabase.getPointById(pointId)
+            point?.let { _pointFromDatabase.value = it }
+        }
     }
 
 }

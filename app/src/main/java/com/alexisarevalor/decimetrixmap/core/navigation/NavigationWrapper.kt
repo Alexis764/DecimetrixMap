@@ -17,12 +17,24 @@ fun NavigationWrapper(modifier: Modifier = Modifier) {
         startDestination = Map,
         modifier = modifier
     ) {
-        composable<Map> {
-            MapScreen(navigateToPointScreen = { navController.navigate(Point) })
+        composable<Map> { backStackEntry ->
+            val pointId = backStackEntry.savedStateHandle.get<Int>("pointId")
+
+            MapScreen(
+                pointId,
+                navigateToPointScreen = { navController.navigate(Point) }
+            )
         }
 
         composable<Point> {
-            PointScreen()
+            PointScreen(
+                navigateToMapScreen = { pointId ->
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("pointId", pointId)
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

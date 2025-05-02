@@ -99,4 +99,31 @@ class MapDatabase @Inject constructor(
         return points
     }
 
+    //Function to get a point by id
+    @SuppressLint("Range")
+    fun getPointById(pointId: Int): PointModel? {
+        val sql = "SELECT * FROM $POINT WHERE $POINT_ID = ?"
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(sql, arrayOf(pointId.toString()))
+
+        if (cursor.moveToFirst()) {
+            val pointName = cursor.getString(cursor.getColumnIndex(POINT_NAME))
+            val pointLatitude = cursor.getDouble(cursor.getColumnIndex(POINT_LATITUDE))
+            val pointLongitude = cursor.getDouble(cursor.getColumnIndex(POINT_LONGITUDE))
+            val pointAlert = cursor.getInt(cursor.getColumnIndex(POINT_ALERT))
+
+            cursor.close()
+            return PointModel(
+                pointId = pointId,
+                pointName = pointName,
+                pointLatitude = pointLatitude,
+                pointLongitude = pointLongitude,
+                pointAlert = pointAlert
+            )
+        }
+
+        cursor.close()
+        return null
+    }
+
 }
