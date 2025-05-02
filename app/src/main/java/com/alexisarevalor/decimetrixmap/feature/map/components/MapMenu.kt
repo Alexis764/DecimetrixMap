@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedButton
@@ -27,6 +28,7 @@ import com.mapbox.maps.Style
 fun MapMenu(
     changeBaseMap: (String) -> Unit,
     centerUserPosition: () -> Unit,
+    navigateToPointScreen: () -> Unit,
     currentPlaceSearched: Feature?,
     centerCurrentPlace: () -> Unit,
     modifier: Modifier = Modifier
@@ -59,6 +61,16 @@ fun MapMenu(
         ) {
             Icon(
                 painter = painterResource(R.drawable.center),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+
+        SmallFloatingActionButton(
+            onClick = { navigateToPointScreen() }
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.List,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp)
             )

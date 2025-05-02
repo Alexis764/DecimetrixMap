@@ -30,6 +30,7 @@ import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportS
 
 @Composable
 fun MapScreen(
+    navigateToPointScreen: () -> Unit,
     mapViewModel: MapViewModel = hiltViewModel()
 ) {
     //Screen states
@@ -89,6 +90,7 @@ fun MapScreen(
         MapMenu(
             changeBaseMap = { mapStyle = it },
             centerUserPosition = { mapViewportState.transitionToFollowPuckState() },
+            navigateToPointScreen = { navigateToPointScreen() },
             currentPlaceSearched = currentPlaceSearched,
             centerCurrentPlace = {
                 mapViewportState.easeTo(

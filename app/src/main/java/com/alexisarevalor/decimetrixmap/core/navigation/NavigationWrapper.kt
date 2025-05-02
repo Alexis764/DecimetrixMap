@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.alexisarevalor.decimetrixmap.feature.map.MapScreen
+import com.alexisarevalor.decimetrixmap.feature.point.PointScreen
 
 @Composable
 fun NavigationWrapper(modifier: Modifier = Modifier) {
@@ -17,7 +18,11 @@ fun NavigationWrapper(modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         composable<Map> {
-            MapScreen()
+            MapScreen(navigateToPointScreen = { navController.navigate(Point) })
+        }
+
+        composable<Point> {
+            PointScreen()
         }
     }
 }
