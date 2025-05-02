@@ -130,7 +130,7 @@ fun MyMap(
             {
                 iconImage = marker
                 textField = it.pointName
-                iconSize = 0.6
+                textOffset = listOf(0.0, 1.2)
             }
         }
     }
